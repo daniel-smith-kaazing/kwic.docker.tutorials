@@ -3,11 +3,6 @@ version: '2'
 services:
 
   certs:
-    # build: https://github.com/robinzimmermann/docker.tutorials.git#certs:tls/cert-generator
-    # image: ca-generator:server
-    # docker build -t cert-generator .
-    # docker run --name cert-generator --rm -v $PWD/x509:/x509 cert-generator server
-    # To get the files: docker cp 2tls_certs_1:/x509 .
     build: cert-generator
     volumes:
       - x509:/x509
@@ -15,7 +10,7 @@ services:
   cloud1.example.com:
     image: kaazing/enterprise-gateway:5.7.2
     environment:
-      GATEWAY_OPTS: "-Dcloud-node-hostname=cloud1.example.com -Dother-cluster-member-ip=cloud2.example.com -Dcom.kaazing.kwic.logging=on"
+      GATEWAY_OPTS: "-Dcloud-node-hostname=cloud1.example.com -Dcom.kaazing.kwic.logging=on"
     volumes:
       - ./config/cloud-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
       - ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
@@ -38,7 +33,7 @@ services:
   cloud2.example.com:
     image: kaazing/enterprise-gateway:5.7.2
     environment:
-      GATEWAY_OPTS: "-Dcloud-node-hostname=cloud2.example.com -Dother-cluster-member-ip=cloud1.example.com -Dcom.kaazing.kwic.logging=on"
+      GATEWAY_OPTS: "-Dcloud-node-hostname=cloud2.example.com -Dcom.kaazing.kwic.logging=on"
     volumes:
       - ./config/cloud-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
       - ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro

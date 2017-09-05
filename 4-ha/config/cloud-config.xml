@@ -2,16 +2,6 @@
 <gateway-config xmlns="http://xmlns.kaazing.org/2016/06/gateway">
 
 
-  <properties>
-
-    <property>
-      <name>cloud-node-hostname</name>
-      <value>www.yahoo.com</value>
-    </property>
-
-  </properties>
-
-
   <cluster>
     <name>kzha</name>
     <accept>tcp://@eth0:5941</accept>
