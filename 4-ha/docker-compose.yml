@@ -15,7 +15,7 @@ services:
   cloud1.example.com:
     image: kaazing/enterprise-gateway:5.7.2
     environment:
-      GATEWAY_OPTS: "-Dcloud-node-hostname=cloud1.example.com -Dother-cluster-member-ip=cloud2.example.com"
+      GATEWAY_OPTS: "-Dcloud-node-hostname=cloud1.example.com -Dother-cluster-member-ip=cloud2.example.com -Dcom.kaazing.kwic.logging=on"
     volumes:
       - ./config/cloud-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
       - ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
@@ -38,7 +38,7 @@ services:
   cloud2.example.com:
     image: kaazing/enterprise-gateway:5.7.2
     environment:
-      GATEWAY_OPTS: "-Dcloud-node-hostname=cloud2.example.com -Dother-cluster-member-ip=cloud1.example.com"
+      GATEWAY_OPTS: "-Dcloud-node-hostname=cloud2.example.com -Dother-cluster-member-ip=cloud1.example.com -Dcom.kaazing.kwic.logging=on"
     volumes:
       - ./config/cloud-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
       - ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
@@ -60,6 +60,8 @@ services:
 
   onprem1.example.org:
     image: kaazing/enterprise-gateway:5.7.2
+    environment:
+      GATEWAY_OPTS: "-Dcom.kaazing.kwic.logging=on"
     volumes:
       - ./config/onprem-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
       - ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
@@ -79,6 +81,8 @@ services:
 
   onprem2.example.org:
     image: kaazing/enterprise-gateway:5.7.2
+    environment:
+      GATEWAY_OPTS: "-Dcom.kaazing.kwic.logging=on"
     volumes:
       - ./config/onprem-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
       - ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro

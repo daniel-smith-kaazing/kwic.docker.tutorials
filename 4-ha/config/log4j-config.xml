@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    Copyright 2007-2017, Kaazing Corporation. All rights reserved.
+
+-->
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
     <appender name="ErrorFile" class="org.apache.log4j.RollingFileAppender">
@@ -33,12 +38,6 @@
 
     <logger name="transport.tcp">
         <level value="info"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="transport.ssl">
-        <level value="info"/>
-        <appender-ref ref="STDOUT"/>
     </logger>
 
     <logger name="transport.http">
@@ -47,7 +46,6 @@
 
     <logger name="transport.wsn">
         <level value="info"/>
-        <appender-ref ref="STDOUT"/>
     </logger>
 
     <logger name="transport.wseb">
@@ -55,7 +53,7 @@
     </logger>
 
     <logger name="org.kaazing.gateway.service.proxy">
-        <level value="all"/>
+        <level value="info"/>
     </logger>
 
     <logger name="org.kaazing.gateway.server">
@@ -96,7 +94,11 @@
 
     <!-- Used for Gateway services. Specific loggers can also be added like "service.jms" -->
     <logger name="service">
-        <level value="all"/>
+        <level value="info"/>
+    </logger>
+
+    <logger name="kwic">
+        <level value="debug"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 

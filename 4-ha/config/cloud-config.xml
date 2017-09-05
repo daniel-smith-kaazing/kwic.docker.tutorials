@@ -12,11 +12,10 @@
   </properties>
 
 
-  <!-- TODO: Add a comment about using unicast here because of Docker. Normally multicast is preferred. -->
   <cluster>
     <name>kzha</name>
     <accept>tcp://@eth0:5941</accept>
-    <connect>tcp://${other-cluster-member-ip}:5941</connect>
+    <connect>udp://224.34.0.1:54327</connect>
   </cluster>
 
 
