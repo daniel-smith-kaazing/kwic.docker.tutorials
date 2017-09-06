@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gateway-config xmlns="http://xmlns.kaazing.org/2016/06/gateway">
+
+  <properties>
+    <property>
+      <name>gateway.host</name>
+      <value>example.com</value>
+    </property>
+  </properties>
+
+  <service>
+    <name>proxy service A</name>
+
+    <accept>pipe://serviceA</accept>
+    <connect>tcp://server-a:5551</connect>
+
+    <type>proxy</type>
+
+    <accept-options>
+      <pipe.transport>socks://${gateway.host}</pipe.transport>
+      <socks.mode>reverse</socks.mode>
+      <socks.transport>wss://${gateway.host}/kwic</socks.transport>
+      <ws.inactivity.timeout>55 seconds</ws.inactivity.timeout>
+      <ssl.protocols>TLSv1.2</ssl.protocols>
+    </accept-options>
+  </service>
+
+
+  <service>
+    <name>proxy service B</name>
+
+    <accept>tcp://@eth0:6661</accept>
+    <connect>wss://${gateway.host}:443/serviceB</connect>
+
+    <type>proxy</type>
+
+    <connect-options>
+      <ws.inactivity.timeout>55 seconds</ws.inactivity.timeout>
+      <ssl.protocols>TLSv1.2</ssl.protocols>
+    </connect-options>
+  </service>
+
+
+  <security>
+
+    <keystore>
+      <type>JCEKS</type>
+      <file>/x509/stores/keystore-onprem.jceks</file>
+      <password-file>/x509/stores/keystore-onprem.pw</password-file>
+    </keystore>
+
+    <truststore>
+      <type>JCEKS</type>
+      <file>/x509/stores/truststore-onprem.jceks</file>
+      <password-file>/x509/stores/truststore-onprem.pw</password-file>
+    </truststore>
+
+  </security>
+
+</gateway-config>

@@ -1,0 +1,148 @@
+version: '2'
+
+services:
+
+  certs:
+    build: ./cert-generator/
+    volumes:
+      - ./myx509:/x509
+    command: [
+      "--command",           "create-ca",
+      # Add the following parameter to force regeneration of certs
+      #"--regenerate",        "true",
+      "--ca-key",            "example.com.ca.key.pem",
+      "--ca-cert",           "example.com.ca.cert.pem",
+      "--ca-password",       "capass",
+      "--ca-days",           "7",
+      "--ca-subject-dn",     "/C=US/ST=California/O=Kaazing/OU=Kaazing Demo Certificate Authority/CN=Kaazing Demo Root CA",
+      "--server-hostname",   "example.com",
+      "--server-days",       "7",
+      "--server-subject-dn", "/C=US/ST=California/O=Kaazing/OU=Kaazing Demo/CN=*.example.com",
+      "--keystore",          "keystore-cloud.jceks",
+      "--keystore-pw",       "ab987c",
+      "--truststore",        "truststore-cloud.jceks",
+      "--truststore-pw",     "changeit",
+      "--trust-ca-alias",    "examplecomca"]
+
+  example.com:
+    build: ./node/
+    volumes:
+      - ./config/cloud-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
+      #- ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./utils/wait-for-files.sh:/wait-for-files.sh:ro
+      - ./myx509:/x509
+    ports:
+      - "5551:5551"
+      - "7771:7771"
+      - "443:443"
+    networks:
+      kwic-net:
+    command: bash -c "/wait-for-files.sh
+                         /x509/stores/keystore-cloud.jceks
+                         /x509/stores/truststore-cloud.jceks
+                      && echo ab987c > /x509/stores/keystore-cloud.pw
+                      && echo changeit > /x509/stores/truststore-cloud.pw
+                      && gateway.start"
+
+  squid:
+    build: ./squid/
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./utils/wait-for-host-and-port:/wait-for-host-and-port:ro
+      - ./utils/wait-for-files.sh:/wait-for-files.sh:ro
+      - ./utils/gen-squid-CA-cert-and-truststore:/gen-squid-CA-cert-and-truststore:ro
+      - ./config/openssl.cnf.server.client:/openssl.cnf.server.client:ro
+      - ./squidcerts:/squidcerts
+      # Remote next after debugging and also remove line copying squid.conf
+      - ./squid:/squid:ro
+      - ./myx509:/x509:ro
+    networks:
+      kwic-net:
+    ports:
+     - "3128:3128"
+    # Experiment: will the entry point also execute?
+    entrypoint: bash -c "/wait-for-files.sh
+                            /x509/stores/truststore-cloud.jceks
+                        && /wait-for-host-and-port
+                             example.com
+                             443
+                         && cp /squid/squid.conf /etc/squid/squid.conf
+                         && /gen-squid-CA-cert-and-truststore
+                         && /sbin/entrypoint.sh"
+
+  onprem:
+    build: ./node/
+    volumes:
+      - ./config/onprem-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
+      #- ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./squidcerts:/squidcerts:ro
+      - ./utils/wait-for-files.sh:/wait-for-files.sh:ro
+      - ./utils/wait-for-host-and-port:/wait-for-host-and-port:ro
+      - ./myx509:/x509
+    environment:
+      GATEWAY_OPTS: -Dhttp.proxyHost=squid -Dhttp.proxyPort=3128
+    ports:
+      - "6661:6661"
+      - "8881:8881"
+    networks:
+      kwic-net:
+    command: bash -c "/wait-for-host-and-port
+                         squid
+                         3128
+                     && /wait-for-files.sh
+                         /x509/stores/keystore-cloud.jceks
+                         /x509/stores/truststore-cloud.jceks
+                         /squidcerts/squid.crt
+                      && cp /x509/stores/keystore-cloud.jceks /x509/stores/keystore-onprem.jceks
+                      && cp /x509/stores/truststore-cloud.jceks /x509/stores/truststore-onprem.jceks
+                      && echo ab987c > /x509/stores/keystore-onprem.pw
+                      && echo changeit > /x509/stores/truststore-onprem.pw
+                      && keytool -importcert -trustcacerts -noprompt -keystore /x509/stores/truststore-onprem.jceks -storepass changeit -file /squidcerts/squid.crt
+                      && gateway.start"
+
+  server-a:
+    image: kaazing/enterprise-gateway:latest
+    environment:
+      GATEWAY_OPTS: "-Dservice-hostname=server-a -Dservice-port=5551"
+    volumes:
+      - ./config/echo-server-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
+    networks:
+      kwic-net:
+
+  server-b:
+    image: kaazing/enterprise-gateway:latest
+    environment:
+      GATEWAY_OPTS: "-Dservice-hostname=server-b -Dservice-port=6661"
+    volumes:
+      - ./config/echo-server-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
+    networks:
+      kwic-net:
+
+  server-c:
+    image: kaazing/enterprise-gateway:latest
+    environment:
+      GATEWAY_OPTS: "-Dservice-hostname=server-c -Dservice-port=7771"
+    volumes:
+      - ./config/echo-server-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
+    networks:
+      kwic-net:
+
+  server-d:
+    image: kaazing/enterprise-gateway:latest
+    environment:
+      GATEWAY_OPTS: "-Dservice-hostname=server-d -Dservice-port=8881"
+    volumes:
+      - ./config/echo-server-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
+    networks:
+      kwic-net:
+
+networks:
+  kwic-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.32.0.0/16
+          gateway: 172.32.0.1

@@ -1,0 +1,24 @@
+#!/bin/bash
+echo Removing any existing certs
+rm -f /squidcerts/squid.*
+echo ""
+echo Generating private key
+openssl genrsa -out /squidcerts/squid.private 2048
+echo ""
+echo Generating CSR
+openssl req -new -key /squidcerts/squid.private -out /squidcerts/squid.csr -config /openssl.cnf.server.client  -sha256 -extensions v3_ca -subj "/C=US/ST=California/O=Kaazing/OU=Kaazing Demo Certificate Authority/CN=Kaazing Demo Root CA"
+echo ""
+echo Sign Certificate
+openssl x509 -req -days 3652 -in /squidcerts/squid.csr -signkey /squidcerts/squid.private -out /squidcerts/squid.crt 
+echo ""
+echo Check results
+openssl x509 -noout -text -in /squidcerts/squid.crt
+echo ""
+echo Converting gateway truststore to PKCS12
+keytool -importkeystore -srckeystore /x509/stores/truststore-cloud.jceks -destkeystore /squidcerts/truststore.p12 -deststoretype PKCS12 -srcstorepass changeit -deststorepass changeit
+echo ""
+echo Converting gateway truststore to PEM
+openssl pkcs12 -passin pass:changeit -passout pass:changeit -nokeys -in /squidcerts/truststore.p12 -out /squidcerts/truststore.pem
+echo ""
+echo Checking results
+openssl x509 -noout -text -in /squidcerts/truststore.pem
