@@ -6,7 +6,7 @@ The configuration for the cloud KWIC instance is in [config/cloud-config.xml](co
 
 The configuration for the on-prem KWIC instance is in [config/onprem-config.xml](config/onprem-config.xml).
 
-These have been changes slightly from the original 2-tls tutorial:
+These have been changed slightly from the original 2-tls tutorial:
 
 - There is a squid proxy acting as a transparent forward proxy between onprem and example.com
 - These have been replaced with iperf3:
