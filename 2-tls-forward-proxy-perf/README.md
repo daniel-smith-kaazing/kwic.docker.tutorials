@@ -20,8 +20,10 @@ See docker-compose service iperf3-source-reverse
 See docker-compose service iperf3-source-forward
 
 Note that if you want to do the perf test without a proxy, simply remove these from the onprem service GATEWAY_OPTS:
+
 ```
 -Dhttp.proxyHost=squid -Dhttp.proxyPort=3128
+```
 
 # Running
 
