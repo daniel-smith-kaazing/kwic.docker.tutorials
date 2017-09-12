@@ -23,6 +23,24 @@ Note that if you want to do the perf test without a proxy, simply remove these f
 ```
 -Dhttp.proxyHost=squid -Dhttp.proxyPort=3128
 
+# Certs
+
+I use a more advanced certificate generator than the original 2-tls. See the certs service for details.
+
+# TRACE logging
+
+To turn on trace logging for example.com or onprem, find this line for that service:
+
+```
+      - ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+```
+
+Change it to the following:
+
+```
+      - ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+```
+
 # Running
 
 docker-compose up
@@ -295,8 +313,4 @@ iperf3-source-reverse    | [SUM] 420.00-480.00 sec   526 MBytes  73.5 Mbits/sec 
 iperf3-source-reverse    | - - - - - - - - - - - - - - - - - - - - - - - - -
 iperf3-source-reverse    | [  4] 480.00-540.00 sec  45.5 MBytes  6.36 Mbits/sec    0 
 ```
-
-# Certs
-
-I use a more advanced certificate generator than the original 2-tls. See the certs service for details.
 

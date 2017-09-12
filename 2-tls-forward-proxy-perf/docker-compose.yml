@@ -56,8 +56,8 @@ services:
     hostname: example.com
     volumes:
       - ./config/cloud-config.xml:/kaazing-kwic-5/conf/kwic-config.xml:ro
-      #- ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
-      - ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      #- ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
       - ./utils/wait-for-files.sh:/wait-for-files.sh:ro
       - ./myx509:/x509
     ports:
@@ -104,8 +104,8 @@ services:
     hostname: onprem
     volumes:
       - ./config/onprem-config.xml:/kaazing-kwic-5/conf/kwic-config.xml:ro
-      #- ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
-      - ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      #- ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
       - ./utils/wait-for-files.sh:/wait-for-files.sh:ro
       - ./utils/wait-for-host-and-port:/wait-for-host-and-port:ro
       - ./myx509:/x509
