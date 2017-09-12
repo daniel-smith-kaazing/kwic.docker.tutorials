@@ -6,7 +6,7 @@ The configuration for the cloud KWIC instance is in [config/cloud-config.xml](co
 
 The configuration for the on-prem KWIC instance is in [config/onprem-config.xml](config/onprem-config.xml).
 
-These have been changes slightly from the original 2-tls tutorial:
+These have been changed slightly from the original 2-tls tutorial:
 
 - There is a squid proxy acting as a transparent forward proxy between onprem and example.com
 - These have been replaced with iperf3:
@@ -20,8 +20,10 @@ See docker-compose service iperf3-source-reverse
 See docker-compose service iperf3-source-forward
 
 Note that if you want to do the perf test without a proxy, simply remove these from the onprem service GATEWAY_OPTS:
+
 ```
 -Dhttp.proxyHost=squid -Dhttp.proxyPort=3128
+```
 
 # Certs
 
@@ -68,15 +70,19 @@ You could tweak the test to test other things. Right now I am only tearing down 
 
 It cranks data as fast as it can in both directions. In each direction it spawns 10 parallel threads for each sink (as currently configured). Here are the command lines provided in the docker-compose.yml for each direction:
 
+```
 iperf3-source-reverse:
     entrypoint: ["/usr/local/bin/iperf3client"]
     command: ["10", "example.com", "5551", "10", "60", "3600"]
+```
 
-So, sleep 10 seconds each time through the loop. Connect to example.com on port 5551 with 10 parallel connections. Report every 10 seconds (see output below) and run for 3600. Then repeat until shut down.
+So, sleep 10 seconds each time through the loop. Connect to example.com on port 5551 with 10 parallel connections. Report every 60 seconds (see output below) and run for 3600 seconds. Then repeat until shut down.
 
+```
 iperf3-source-forward:
     entrypoint: ["/usr/local/bin/iperf3client"]
     command: ["10", "onprem", "6661", "10", "60", "3600"]
+```
 
 Same as the above but for onprem:6661.
  
