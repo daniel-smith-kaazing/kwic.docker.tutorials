@@ -52,15 +52,19 @@ You could tweak the test to test other things. Right now I am only tearing down 
 
 It cranks data as fast as it can in both directions. In each direction it spawns 10 parallel threads for each sink (as currently configured). Here are the command lines provided in the docker-compose.yml for each direction:
 
+```
 iperf3-source-reverse:
     entrypoint: ["/usr/local/bin/iperf3client"]
     command: ["10", "example.com", "5551", "10", "60", "3600"]
+```
 
 So, sleep 10 seconds each time through the loop. Connect to example.com on port 5551 with 10 parallel connections. Report every 10 seconds (see output below) and run for 3600. Then repeat until shut down.
 
+```
 iperf3-source-forward:
     entrypoint: ["/usr/local/bin/iperf3client"]
     command: ["10", "onprem", "6661", "10", "60", "3600"]
+```
 
 Same as the above but for onprem:6661.
  
