@@ -58,7 +58,7 @@ iperf3-source-reverse:
     command: ["10", "example.com", "5551", "10", "60", "3600"]
 ```
 
-So, sleep 10 seconds each time through the loop. Connect to example.com on port 5551 with 10 parallel connections. Report every 10 seconds (see output below) and run for 3600. Then repeat until shut down.
+So, sleep 10 seconds each time through the loop. Connect to example.com on port 5551 with 10 parallel connections. Report every 60 seconds (see output below) and run for 3600 seconds. Then repeat until shut down.
 
 ```
 iperf3-source-forward:
