@@ -1,0 +1,179 @@
+version: '2'
+
+services:
+
+  certs:
+    build: ./cert-generator/
+    volumes:
+      - ./myx509:/x509
+    command: [
+      "--command",           "create-ca",
+      # Add the following parameter to force regeneration of certs
+      #"--regenerate",        "true",
+      "--ca-key",            "example.com.ca.key.pem",
+      "--ca-cert",           "example.com.ca.cert.pem",
+      "--ca-password",       "capass",
+      "--ca-days",           "7",
+      "--ca-subject-dn",     "/C=US/ST=California/O=Kaazing/OU=Kaazing Demo Certificate Authority/CN=Kaazing Demo Root CA",
+      "--server-hostname",   "example.com",
+      "--server-days",       "7",
+      "--server-subject-dn", "/C=US/ST=California/O=Kaazing/OU=Kaazing Demo/CN=*.example.com",
+      "--keystore",          "keystore-cloud.jceks",
+      "--keystore-pw",       "ab987c",
+      "--truststore",        "truststore-cloud.jceks",
+      "--truststore-pw",     "changeit",
+      "--trust-ca-alias",    "examplecomca"]
+
+
+  iperf3-sink-reverse:
+    build:
+      context: iperf3
+    container_name: iperf3-sink-reverse
+    hostname: iperf3-sink-reverse
+    networks:
+      - kwic-net
+    # Params are:
+    # $1 - port to listen on
+    # $2 - reporting interval - sec.
+    entrypoint: ["/usr/local/bin/iperf3server"]
+    command: ["45678","60"]
+
+  iperf3-sink-forward:
+    build:
+      context: iperf3
+    container_name: iperf3-sink-forward
+    hostname: iperf3-sink-forward
+    networks:
+      - kwic-net
+    # Params are:
+    # $1 - port to listen on
+    # $2 - reporting interval - sec.
+    entrypoint: ["/usr/local/bin/iperf3server"]
+    command: ["45678","60"]
+
+  example.com:
+    build: ./node/
+    hostname: example.com
+    volumes:
+      - ./config/cloud-config.xml:/kaazing-kwic-5/conf/kwic-config.xml:ro
+      #- ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./utils/wait-for-files.sh:/wait-for-files.sh:ro
+      - ./myx509:/x509
+    ports:
+      - "5552:5551"
+      - "443:443"
+    networks:
+      - kwic-net
+    links:
+      - iperf3-sink-forward
+    environment:
+      GATEWAY_OPTS: -Dserver-b.host=iperf3-sink-forward -Dserver-b.port=45678
+    command: bash -c "/wait-for-files.sh
+                         /x509/stores/keystore-cloud.jceks
+                         /x509/stores/truststore-cloud.jceks
+                      && echo ab987c > /x509/stores/keystore-cloud.pw
+                      && echo changeit > /x509/stores/truststore-cloud.pw
+                      && /kaazing-kwic-5/bin/kwic.start"
+
+  squid:
+    build: ./squid/
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./utils/wait-for-host-and-port:/wait-for-host-and-port:ro
+      - ./utils/wait-for-files.sh:/wait-for-files.sh:ro
+      # Remove next after debugging and also remove line copying squid.conf
+      - ./squid:/squid:ro
+      - ./myx509:/x509:ro
+    networks:
+      - kwic-net
+    ports:
+     - "3128:3128"
+    # Experiment: will the entry point also execute?
+    entrypoint: bash -c "/wait-for-files.sh
+                            /x509/stores/truststore-cloud.jceks
+                        && /wait-for-host-and-port
+                             example.com
+                             443
+                         && cp /squid/squid.conf /etc/squid/squid.conf
+                         && /sbin/entrypoint.sh"
+
+  onprem:
+    build: ./node/
+    hostname: onprem
+    volumes:
+      - ./config/onprem-config.xml:/kaazing-kwic-5/conf/kwic-config.xml:ro
+      #- ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./utils/wait-for-files.sh:/wait-for-files.sh:ro
+      - ./utils/wait-for-host-and-port:/wait-for-host-and-port:ro
+      - ./myx509:/x509
+    #environment:
+    environment:
+      GATEWAY_OPTS: -Dserver-a.host=iperf3-sink-reverse -Dserver-a.port=45678 -Dhttp.proxyHost=squid -Dhttp.proxyPort=3128
+    ports:
+      - "6662:6661"
+    networks:
+      - kwic-net
+    links:
+      - iperf3-sink-reverse
+    command: bash -c "/wait-for-host-and-port
+                         squid
+                         3128
+                     && /wait-for-files.sh
+                         /x509/stores/keystore-cloud.jceks
+                         /x509/stores/truststore-cloud.jceks
+                      && cp /x509/stores/keystore-cloud.jceks /x509/stores/keystore-onprem.jceks
+                      && cp /x509/stores/truststore-cloud.jceks /x509/stores/truststore-onprem.jceks
+                      && echo ab987c > /x509/stores/keystore-onprem.pw
+                      && echo changeit > /x509/stores/truststore-onprem.pw
+                      && /kaazing-kwic-5/bin/kwic.start"
+
+  iperf3-source-reverse:
+    build:
+      context: iperf3
+    container_name: iperf3-source-reverse
+    hostname: iperf3-source-reverse
+    links:
+      - example.com
+    networks:
+      - kwic-net
+    # Params are:
+    # $1 - SLEEP time for loop - sec.
+    # $2 - iperf3 sink host
+    # $3 - port to connect
+    # $4 - parallel connections
+    # $5 - report interval - sec.
+    # $6 - duration of client - sec.
+    # $7 - bandwidth - default is no throttle - values can have K|G|M as in 201M = 201mpbs per connection
+    entrypoint: ["/usr/local/bin/iperf3client"]
+    command: ["10", "example.com", "5551", "10", "60", "3600"]
+
+  iperf3-source-forward:
+    build:
+      context: iperf3
+    container_name: iperf3-source-forward
+    hostname: iperf3-source-forward
+    links:
+      - onprem
+    networks:
+      - kwic-net
+    # Params are:
+    # $1 - SLEEP time for loop - sec.
+    # $2 - iperf3 sink host
+    # $3 - port to connect
+    # $4 - parallel connections
+    # $5 - report interval - sec.
+    # $6 - duration of client - sec.
+    # $7 - bandwidth - default is no throttle - values can have K|G|M as in 201M = 201mpbs per connection
+    entrypoint: ["/usr/local/bin/iperf3client"]
+    command: ["10", "onprem", "6661", "10", "60", "3600"]
+
+networks:
+  kwic-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.32.0.0/16
+          gateway: 172.32.0.1

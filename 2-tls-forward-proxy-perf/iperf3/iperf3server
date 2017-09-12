@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Params are: 
+# $1 - port to listen on
+# $2 - reporting interval - sec.
+
+PORT=$1
+if [ -z "$PORT" ]; then
+  PORT=45678
+fi
+
+INTERVAL=$2
+if [ -z "$INTERVAL" ]; then
+  INTERVAL=60
+fi
+
+iperf3server()
+{
+  echo iperf3server: PORT $1 INTERVAL $2
+  /usr/bin/iperf3 -s -p $1 -i $2
+}
+
+while [ true ]; do
+  {
+    iperf3server $PORT $INTERVAL
+    date
+    sleep 5
+  }
+  trap ERR
+done

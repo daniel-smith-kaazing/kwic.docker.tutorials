@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# Params are:
+# $1 - SLEEP time for loop - sec.
+# $2 - IP of iperf3 sink
+# $3 - port to connect
+# $4 - parallel connections
+# $5 - report interval - sec.
+# $6 - duration of client - sec.
+# $7 - bandwidth - default is no throttle - values can have K|G|M as in 201M = 201mpbs per connection
+
+SLEEP=$1
+if [ -z "$SLEEP" ]; then
+  SLEEP=60
+fi
+
+
+ADDR=$2
+if [ -z "$ADDR" ]; then
+  ADDR=172.17.0.4
+fi
+
+PORT=$3
+if [ -z "$PORT" ]; then
+  PORT=8010
+fi
+
+PARALLEL=$4
+if [ -z "$PARALLEL" ]; then
+  PARALLEL=5
+fi
+
+INTERVAL=$5
+if [ -z "$INTERVAL" ]; then
+  INTERVAL=60
+fi
+
+DURATION=$6
+if [ -z "$DURATION" ]; then
+  DURATION=86400
+fi
+
+BANDWIDTH=$7
+
+iperf3client()
+{
+  if [ -z "$BANDWIDTH" ]; then
+    echo iperf3client: ADDR $1 PORT $2 PARALLEL $3 INTERVAL $4 DURATION $5 BANDWIDTH as fast as possible... 
+    /usr/bin/iperf3 -c $1 -p $2 -P $3 -i $4 -t $5
+  else
+    echo iperf3client: ADDR $1 PORT $2 PARALLEL $3 INTERVAL $4 DURATION $5 BANDWIDTH $6
+    /usr/bin/iperf3 -c $1 -p $2 -P $3 -i $4 -t $5 -b $6
+  fi    
+}
+
+while [ true ]; do
+  {
+    echo iperf3client sleeping $SLEEP secs...
+    sleep $SLEEP
+    iperf3client $ADDR $PORT $PARALLEL $INTERVAL $DURATION $BANDWIDTH
+    date
+  }
+  trap ERR
+done
