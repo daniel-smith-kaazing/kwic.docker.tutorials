@@ -1,0 +1,291 @@
+
+Everything will be logged to: /x509/log/2018-02-14_04-27-40.log
+/x509: log /x509/log: 2018-02-14_04-27-40.log
+
+------------------------------------------------------------------------------
+server-root-ca: Creating the keypair: /x509/ca/server-root-ca/private/server-root-ca.key
+------------------------------------------------------------------------------
+Generating RSA private key, 4096 bit long modulus
+.............................++
+.......++
+e is 65537 (0x10001)
+
+------------------------------------------------------------------------------
+server-root-ca: Creating the signing request: /x509/ca/server-root-ca.csr
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+server-root-ca: Creating the certificate (CSR self-signed): /x509/ca/server-root-ca.crt
+------------------------------------------------------------------------------
+Using configuration from /conf/root-ca.conf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 1 (0x1)
+        Validity
+            Not Before: Feb 14 04:27:41 2018 GMT
+            Not After : Feb 24 04:27:41 2018 GMT
+        Subject:
+            countryName               = US
+            stateOrProvinceName       = California
+            organizationName          = Kaazing
+            organizationalUnitName    = Kaazing Demo Server CA
+            commonName                = Kaazing Demo Server Root CA
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Certificate Sign, CRL Sign
+            X509v3 Basic Constraints: critical
+                CA:TRUE, pathlen:1
+            X509v3 Subject Key Identifier: 
+                0E:33:D2:95:23:17:C9:9A:59:37:02:E2:BD:70:E4:DB:6A:1E:F0:9B
+            X509v3 Authority Key Identifier: 
+                keyid:0E:33:D2:95:23:17:C9:9A:59:37:02:E2:BD:70:E4:DB:6A:1E:F0:9B
+
+Certificate is to be certified until Feb 24 04:27:41 2018 GMT (10 days)
+
+Write out database with 1 new entries
+Data Base Updated
+
+------------------------------------------------------------------------------
+Server cert: Creating the certificate signing request: /x509/certs/example.com.csr
+------------------------------------------------------------------------------
+Generating a 2048 bit RSA private key
+..........+++
+..............+++
+writing new private key to '/x509/certs/example.com.key'
+-----
+
+------------------------------------------------------------------------------
+Server cert: Creating the certificate (CSR signed with signing CA): /x509/certs/example.com.crt
+------------------------------------------------------------------------------
+Using configuration from /conf/root-ca.conf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 2 (0x2)
+        Validity
+            Not Before: Feb 14 04:27:41 2018 GMT
+            Not After : Feb 24 04:27:41 2018 GMT
+        Subject:
+            countryName               = US
+            stateOrProvinceName       = California
+            organizationName          = Kaazing
+            organizationalUnitName    = Kaazing Demo
+            commonName                = *.example.com
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                E9:97:31:DD:A8:24:96:FB:33:5B:1D:92:0E:5C:FF:45:E3:F9:EC:BE
+            X509v3 Authority Key Identifier: 
+                keyid:0E:33:D2:95:23:17:C9:9A:59:37:02:E2:BD:70:E4:DB:6A:1E:F0:9B
+
+            X509v3 Subject Alternative Name: 
+                DNS:example.com, DNS:*.example.com, DNS:example.net, DNS:*.example.net, DNS:example.org, DNS:*.example.org
+Certificate is to be certified until Feb 24 04:27:41 2018 GMT (10 days)
+
+Write out database with 1 new entries
+Data Base Updated
+
+------------------------------------------------------------------------------
+Verifying chain of trust for /x509/certs/example.com.crt using /x509/ca/server-root-ca.crt
+------------------------------------------------------------------------------
+/x509/certs/example.com.crt: OK
+
+------------------------------------------------------------------------------
+Server cert: Converting key and certificate to PKCS12 format: /x509/pkcs12/example.com.key.p12
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+Server cert: Importing the PCKS12 file (containing the key and certificate) into the keystore /x509/stores/keystore-cloud.jceks
+------------------------------------------------------------------------------
+Importing keystore /x509/pkcs12/example.com.key.p12 to /x509/stores/keystore-cloud.jceks...
+
+Warning:
+The JCEKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore /x509/stores/keystore-cloud.jceks -destkeystore /x509/stores/keystore-cloud.jceks -deststoretype pkcs12".
+
+------------------------------------------------------------------------------
+Server cert: Saving keystore password file: /x509/stores/keystore-cloud.pw
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+Server cert: Importing the CA into the truststore /x509/stores/truststore-onprem.jceks
+------------------------------------------------------------------------------
+Certificate was added to keystore
+
+------------------------------------------------------------------------------
+Server cert: Saving truststore password file: /x509/stores/truststore-onprem.pw
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+Server cert: Listing of /x509/stores/keystore-cloud.jceks
+------------------------------------------------------------------------------
+Keystore type: JCEKS
+Keystore provider: SunJCE
+
+Your keystore contains 1 entry
+
+example.com, Feb 14, 2018, PrivateKeyEntry, 
+Certificate fingerprint (SHA1): 74:D4:48:57:31:4B:4F:FC:94:67:B0:B5:B1:BE:5D:18:1C:CD:C7:BA
+
+Warning:
+The JCEKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore /x509/stores/keystore-cloud.jceks -destkeystore /x509/stores/keystore-cloud.jceks -deststoretype pkcs12".
+
+------------------------------------------------------------------------------
+Server cert: Listing of /x509/stores/truststore-onprem.jceks
+------------------------------------------------------------------------------
+Keystore type: JCEKS
+Keystore provider: SunJCE
+
+Your keystore contains 1 entry
+
+kaazingdemoserverca, Feb 14, 2018, trustedCertEntry, 
+Certificate fingerprint (SHA1): 42:6E:80:84:48:1A:B2:B6:78:C1:0F:A3:6B:A4:A5:8C:BD:CA:C6:9E
+
+------------------------------------------------------------------------------
+client-root-ca: Creating the keypair: /x509/ca/client-root-ca/private/client-root-ca.key
+------------------------------------------------------------------------------
+Generating RSA private key, 4096 bit long modulus
+.........................................................................++
+.....++
+e is 65537 (0x10001)
+
+------------------------------------------------------------------------------
+client-root-ca: Creating the signing request: /x509/ca/client-root-ca.csr
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+client-root-ca: Creating the certificate (CSR self-signed): /x509/ca/client-root-ca.crt
+------------------------------------------------------------------------------
+Using configuration from /conf/root-ca.conf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 1 (0x1)
+        Validity
+            Not Before: Feb 14 04:27:52 2018 GMT
+            Not After : Feb 24 04:27:52 2018 GMT
+        Subject:
+            countryName               = US
+            stateOrProvinceName       = California
+            organizationName          = Kaazing
+            organizationalUnitName    = Kaazing Demo Client CA
+            commonName                = Kaazing Demo Client Root CA
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Certificate Sign, CRL Sign
+            X509v3 Basic Constraints: critical
+                CA:TRUE, pathlen:1
+            X509v3 Subject Key Identifier: 
+                D4:4D:35:5E:3D:81:76:8D:62:1D:3E:B1:F2:41:D7:B8:CB:C4:D6:2E
+            X509v3 Authority Key Identifier: 
+                keyid:D4:4D:35:5E:3D:81:76:8D:62:1D:3E:B1:F2:41:D7:B8:CB:C4:D6:2E
+
+Certificate is to be certified until Feb 24 04:27:52 2018 GMT (10 days)
+
+Write out database with 1 new entries
+Data Base Updated
+
+------------------------------------------------------------------------------
+Client cert: Creating the certificate signing request: /x509/certs/tenant101.csr
+------------------------------------------------------------------------------
+Generating a 2048 bit RSA private key
+..........+++
+..............................................................+++
+writing new private key to '/x509/certs/tenant101.key'
+-----
+
+------------------------------------------------------------------------------
+Client cert: Creating the certificate (CSR signed with signing CA): /x509/certs/tenant101.crt
+------------------------------------------------------------------------------
+Using configuration from /conf/root-ca.conf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 2 (0x2)
+        Validity
+            Not Before: Feb 14 04:27:53 2018 GMT
+            Not After : Feb 24 04:27:53 2018 GMT
+        Subject:
+            countryName               = US
+            stateOrProvinceName       = California
+            organizationName          = Kaazing
+            organizationalUnitName    = Kaazing Demo
+            commonName                = tenant101
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Extended Key Usage: 
+                TLS Web Client Authentication
+            X509v3 Subject Key Identifier: 
+                65:84:AF:54:E4:76:68:EC:28:1D:0C:FC:CA:AB:B6:8B:CE:88:18:C8
+            X509v3 Authority Key Identifier: 
+                keyid:D4:4D:35:5E:3D:81:76:8D:62:1D:3E:B1:F2:41:D7:B8:CB:C4:D6:2E
+
+Certificate is to be certified until Feb 24 04:27:53 2018 GMT (10 days)
+
+Write out database with 1 new entries
+Data Base Updated
+
+------------------------------------------------------------------------------
+Verifying chain of trust for /x509/certs/tenant101.crt using /x509/ca/client-root-ca.crt
+------------------------------------------------------------------------------
+/x509/certs/tenant101.crt: OK
+
+------------------------------------------------------------------------------
+Client cert: Converting key and certificate to PKCS12 format: /x509/pkcs12/tenant101.key.p12
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+Client cert: Importing the PCKS12 file (containing the key and certificate) into the keystore /x509/stores/keystore-onprem.jceks
+------------------------------------------------------------------------------
+Importing keystore /x509/pkcs12/tenant101.key.p12 to /x509/stores/keystore-onprem.jceks...
+
+Warning:
+The JCEKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore /x509/stores/keystore-onprem.jceks -destkeystore /x509/stores/keystore-onprem.jceks -deststoretype pkcs12".
+
+------------------------------------------------------------------------------
+Client cert: Saving keystore password file: /x509/stores/keystore-onprem.pw
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+Client cert: Importing the CA into the truststore /x509/stores/truststore-cloud.jceks
+------------------------------------------------------------------------------
+Certificate was added to keystore
+
+------------------------------------------------------------------------------
+Client cert: Saving truststore password file: /x509/stores/truststore-cloud.pw
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+Client cert: Listing of /x509/stores/keystore-onprem.jceks
+------------------------------------------------------------------------------
+Keystore type: JCEKS
+Keystore provider: SunJCE
+
+Your keystore contains 1 entry
+
+tenant101, Feb 14, 2018, PrivateKeyEntry, 
+Certificate fingerprint (SHA1): 10:ED:C0:B3:73:60:4E:D5:AA:E8:3B:B9:A7:28:2D:D8:A7:DC:CB:95
+
+Warning:
+The JCEKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore /x509/stores/keystore-onprem.jceks -destkeystore /x509/stores/keystore-onprem.jceks -deststoretype pkcs12".
+
+------------------------------------------------------------------------------
+Client cert: Listing of /x509/stores/truststore-cloud.jceks
+------------------------------------------------------------------------------
+Keystore type: JCEKS
+Keystore provider: SunJCE
+
+Your keystore contains 1 entry
+
+kaazingdemoclientca, Feb 14, 2018, trustedCertEntry, 
+Certificate fingerprint (SHA1): A4:F5:BA:09:F1:BF:BC:AE:F4:7C:1B:6E:8A:5E:4B:E4:1F:4F:28:9D
+
+All done

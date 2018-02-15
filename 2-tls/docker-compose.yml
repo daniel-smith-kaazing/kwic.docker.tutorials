@@ -10,15 +10,15 @@ services:
     # To get the files: docker cp 2tls_certs_1:/x509 .
     build: cert-generator
     volumes:
-      - x509:/x509
+      - ./myx509:/x509
 
   example.com:
-    image: kaazing/enterprise-gateway:5.7.2
+    image: kaazing/enterprise-gateway:latest
     volumes:
       - ./config/cloud-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
       - ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
       - ./utils/wait-for-files.sh:/wait-for-files.sh:ro
-      - x509:/x509:ro
+      - ./myx509:/x509:ro
     ports:
       - "5551:5551"
       - "7771:7771"
@@ -34,12 +34,12 @@ services:
 
 
   onprem:
-    image: kaazing/enterprise-gateway:5.7.2
+    image: kaazing/enterprise-gateway:latest
     volumes:
       - ./config/onprem-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
       - ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
       - ./utils/wait-for-files.sh:/wait-for-files.sh:ro
-      - x509:/x509:ro
+      - ./myx509:/x509:ro
     ports:
       - "6661:6661"
       - "8881:8881"
@@ -54,7 +54,7 @@ services:
                       && gateway.start"
 
   server-a:
-    image: kaazing/enterprise-gateway:5.7.2
+    image: kaazing/enterprise-gateway:latest
     environment:
       GATEWAY_OPTS: "-Dservice-hostname=server-a -Dservice-port=5551"
     volumes:
@@ -63,7 +63,7 @@ services:
       kwic-net:
 
   server-b:
-    image: kaazing/enterprise-gateway:5.7.2
+    image: kaazing/enterprise-gateway:latest
     environment:
       GATEWAY_OPTS: "-Dservice-hostname=server-b -Dservice-port=6661"
     volumes:
@@ -72,7 +72,7 @@ services:
       kwic-net:
 
   server-c:
-    image: kaazing/enterprise-gateway:5.7.2
+    image: kaazing/enterprise-gateway:latest
     environment:
       GATEWAY_OPTS: "-Dservice-hostname=server-c -Dservice-port=7771"
     volumes:
@@ -81,7 +81,7 @@ services:
       kwic-net:
 
   server-d:
-    image: kaazing/enterprise-gateway:5.7.2
+    image: kaazing/enterprise-gateway:latest
     environment:
       GATEWAY_OPTS: "-Dservice-hostname=server-d -Dservice-port=8881"
     volumes:
@@ -89,8 +89,8 @@ services:
     networks:
       kwic-net:
 
-volumes:
-  x509:
+#volumes:
+  #x509:
 
 networks:
   kwic-net:
