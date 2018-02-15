@@ -5,7 +5,9 @@ Forward service - the pair of services that service onprem clients
 
 # Bug in verify.client
 
-You can't add *socks.ssl.verify.client* to the reverse service and *ssl.verify.client* to the forward service at the same time as of Feb 15 2018. There is a bug and the gateways won't start. I will file a github ticket. For now I've only added the setting to the reverse service.
+You can't add *socks.ssl.verify.client* to the reverse service and *ssl.verify.client* to the forward service at the same time as of Feb 15 2018. There is a bug and the gateways won't start. For now I've only added the setting to the reverse service.
+
+Github ticket for the bug: https://github.com/kaazing/tickets/issues/1264
 
 # KWIC TLS with Squid SSL passthrough forward proxy between gateways
 
