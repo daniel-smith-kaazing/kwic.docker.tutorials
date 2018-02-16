@@ -104,6 +104,8 @@ services:
       GATEWAY_OPTS: "-Dservice-hostname=server-a -Dservice-port=5551"
     volumes:
       - ./config/echo-server-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
+      #- ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
     networks:
       kwic-net:
 
@@ -113,6 +115,8 @@ services:
       GATEWAY_OPTS: "-Dservice-hostname=server-b -Dservice-port=6661"
     volumes:
       - ./config/echo-server-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
+      #- ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
     networks:
       kwic-net:
 
@@ -122,6 +126,8 @@ services:
       GATEWAY_OPTS: "-Dservice-hostname=server-c -Dservice-port=7771"
     volumes:
       - ./config/echo-server-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
+      #- ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
     networks:
       kwic-net:
 
@@ -131,6 +137,8 @@ services:
       GATEWAY_OPTS: "-Dservice-hostname=server-d -Dservice-port=8881"
     volumes:
       - ./config/echo-server-config.xml:/kaazing-gateway/conf/gateway-config.xml:ro
+      #- ./config/log4j-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
+      - ./config/log4j-trace-config.xml:/kaazing-gateway/conf/log4j-config.xml:ro
     networks:
       kwic-net:
 
